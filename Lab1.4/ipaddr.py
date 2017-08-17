@@ -9,6 +9,14 @@ class IPv4RandomNetwork(IPv4Network):
         IPv4Network.__init__(self, address)
 
     def key_value(self):
-        return (self.network_address._ip, self.netmask._ip)
+        return (self.netmask._ip, self.network_address._ip)
 
 
+l = []
+for i in range(50):
+    l.append(IPv4RandomNetwork())
+
+l.sort(key=lambda net: net.key_value())
+
+for network in l:
+    print(network)
