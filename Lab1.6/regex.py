@@ -1,5 +1,5 @@
 import glob
-from re import match,search
+from re import search
 
 def strClass(str):
     expIP = '^ *ip +address +(([0-9]\.?)+) +(([0-9]\.?)+)'
