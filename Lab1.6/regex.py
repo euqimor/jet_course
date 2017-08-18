@@ -2,7 +2,7 @@ import glob
 from re import match,search
 
 def strClass(str):
-    expIP = '^ *ip +address +(([0-9]\.?)*) +(([0-9]\.?)*)'
+    expIP = '^ *ip +address +(([0-9]\.?)+) +(([0-9]\.?)+)'
     expInt = '^ *interface +(.+)'
     expHost = '^ *hostname +(.+)'
     if bool(search(expIP,str)):
