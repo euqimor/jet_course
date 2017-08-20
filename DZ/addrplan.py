@@ -1,5 +1,26 @@
-import glob, itertools, sys, time
+import glob, sys, time
+from threading import Thread
 from re import findall
+from ipaddress import IPv4Network as Network, IPv4Interface as Interface
+
+class AnimationThread(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
+        self.isRunning = True
+    def run(self):
+        while self.isRunning:
+            spinAnimation()
+    def stop(self):
+        self.isRunning = False
+
+def spinAnimation():
+    spinner = ['/', '-', '\\', '|']
+    for item in spinner:
+        sys.stdout.write(item)
+        sys.stdout.flush()
+        sys.stdout.write('\b')
+        time.sleep(0.1)
 
 def getAddr(str):
     expAddr = ('interface +(.+) *\n(.*\n(?!!))* *ip address (([0-9]\.?)*) +(([0-9]\.?)*)')
@@ -17,16 +38,6 @@ def getPath():
         path = tmp
     return path
 
-def spinAnimation():
-    spinner = itertools.cycle(['/','-','\\','|'])
-    print(next(spinner),end='')
-    time.sleep(0.2)
-
-def spinTest():
-    for i in range(100):
-        spinAnimation()
-
-
 def getFileList(path):
     fileList = []
     while len(fileList) == 0:
@@ -38,22 +49,25 @@ def getFileList(path):
 
 def getAddressList(fileList):
     addressList = []
-    print('\nWorking, please wait...')
     for filePath in fileList:
         with open(filePath) as file:
             data = file.read()
             addresses = getAddr(data)
             if addresses:
                 for item in addresses:
-                    spinAnimation()
                     addressList.append(item)
     return addressList
 
 def areYouSure():
     path = getPath()
     fileList = getFileList(path)
+    print('\nWorking, please wait...\n')
+    animation = AnimationThread()
+    animation.start()
     addressList = getAddressList(fileList)
-    print('\nThe resulting list is ' + str(len(addressList)) + ' long.')
+    animation.stop()
+    # sys.stdout.write('\rThe resulting list is ' + str(len(addressList)) + ' items long.')
+    print('\rThe resulting list is ' + str(len(addressList)) + ' items long.')
     answer = input('Are you sure you want to print it?[Y]') or 'Y'
     while True:
         if answer == 'Y' or answer == 'y':
@@ -70,5 +84,4 @@ def areYouSure():
         else:
             answer = input('Please answer Y or N [Y]:') or 'Y'
 
-spinTest()
-# areYouSure()
+areYouSure()
