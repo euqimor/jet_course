@@ -164,11 +164,10 @@ def saveInFile(addressPlan, path=os.getcwd(), filename='AddressPlan'):
     print('Saved in '+str(os.getcwd())+' as '+filename+'.xlsx')
 
 def saveDialogue():
-    answer = input('\nWould you like to save the data as an excel spreadsheet?:[Y]') or 'Y'
+    answer = input('\nWould you like to save the data as an excel spreadsheet?[Y]:') or 'Y'
     while answer.lower() not in ['y','n']:
-        answer = input('Please answer Y or N:[Y]') or 'Y'
+        answer = input('Please answer Y or N[Y]:') or 'Y'
     if answer.lower() == 'y':
-        # path = os.getcwd()
         successful = False
         while not successful:
             print('\nCurrent directory is:'+os.getcwd())
@@ -205,7 +204,7 @@ def runProgram():
     interfaceList = createInterfaceList(addressList)
     interfaceList = sortInterfaces(interfaceList)
     addressPlan = createAddressPlan(networkList, interfaceList)
-    # printAddressPlan(addressPlan)
+    printAddressPlan(addressPlan)
     savePrompt = saveDialogue()
     if savePrompt['answer'] == 'y':
         saveInFile(addressPlan,savePrompt['path'],savePrompt['filename'])
