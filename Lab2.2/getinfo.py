@@ -1,5 +1,4 @@
-from flask import Flask
-from flask import jsonify
+from flask import Flask, jsonify, render_template
 import sys,os,glob
 from re import findall
 
@@ -12,7 +11,9 @@ def getAddr(str):
         result = findall(expAddr,str)
         if result:
             hostAdrrDict.setdefault(hostname[0])
-            hostAdrrDict[hostname[0]] = result
+            hostAdrrDict[hostname[0]] = []
+            for entry in result:
+                hostAdrrDict[hostname[0]].append((entry[0], entry[2], entry[4]))
             return hostAdrrDict
     else:
         return False
@@ -51,16 +52,9 @@ def addressListToStr(addressList):
             resultStr += (str(item)+' = '+str(dictionary[item])+'\n')
     return resultStr
 
-# def getPrintableStr():
-#     path = 'C:\\python_local\\projects\\p4ne\Lab1.5\\config_files\\'
-#     fileList = getFileList(path)
-#     addressList = getAddressList(fileList)
-#     printableStr = addressListToStr(addressList)
-#     return printableStr
-
-# printableStr = getPrintableStr()
-
+# path = 'G:\\Py\\p4ne\\Lab1.5\\config_files\\'
 path = 'C:\\python_local\\projects\\p4ne\Lab1.5\\config_files\\'
+
 fileList = getFileList(path)
 addressList = getAddressList(fileList)
 printableStr = addressListToStr(addressList)
@@ -81,19 +75,21 @@ def configs():
     for dictionary in addressList:
         for hostname in dictionary.keys():
             hostList.append(hostname)
-    return jsonify(hostList)
+    htmlString = ''
+    for item in hostList:
+        htmlString += '<a href =\"configs/'+item+'\">'+item+'</a><br>'
+    return render_template('configs.html', content=htmlString, title='Configs')
 
 @app.route('/configs/<hostname>')
 def ip_info(hostname):
     for dictionary in addressList:
         for h in dictionary.keys():
             if h == hostname:
-                return jsonify(dictionary[h])
+                htmlString = ''
+                for item in dictionary[h]:
+                    htmlString += '<b>'+item[0]+'</b>:  '+item[1]+'  '+item[2]+'<br><br>'
+                return render_template('configs.html', content=htmlString, title=h)
     return jsonify('Not found')
-
-@app.route('/iplist')
-def ipList():
-    return printableStr
 
 if __name__=='__main__':
     app.run(debug=True)
