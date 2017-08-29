@@ -59,4 +59,5 @@ def areYouSure():
         else:
             answer = input('Please answer Y or N:')
 
-areYouSure()
+if __name__=='__main__':
+    areYouSure()
